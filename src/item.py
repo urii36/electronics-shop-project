@@ -10,7 +10,7 @@ class Item:
 
     def __init__(self, name: str, price: float, quantity: int) -> None:
         """
-        экземпляра класса item.
+        создание экземпляра класса item.
         """
         self.__name = name
         self.__price = price
