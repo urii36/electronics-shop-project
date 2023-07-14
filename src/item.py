@@ -1,4 +1,8 @@
 import csv
+import os
+
+from src.config import ITEMS_CSV_PATH
+from src.instantiatecsverror import InstantiateCSVError
 
 
 class Item:
@@ -81,9 +85,21 @@ class Item:
         return int(float(value))
 
     @classmethod
-    def instantiate_from_csv(cls):
-        cls.all.clear()
-        with open('../src/items.csv', 'r', encoding='windows-1251') as file:
-            file_reader = csv.DictReader(file)
-            for row in file_reader:
-                cls(row['name'], float(row['price']), int(row['quantity']))
+    def instantiate_from_csv(cls, path=ITEMS_CSV_PATH) -> None:
+        try:
+            if not os.path.exists(path):
+                raise FileNotFoundError(f"Отсутствует файл {path.split('/')[-1]}")
+
+            cls.all.clear()
+            with open(path, 'r', encoding='windows-1251') as file:
+                file_reader = csv.DictReader(file, delimiter=',')
+
+                for row in file_reader:
+                    if set(row) != {'name', 'price', 'quantity'}:
+                        raise InstantiateCSVError(path)
+                    cls(row['name'], cls.string_to_number(row['price']), cls.string_to_number(row['quantity']))
+
+        except FileNotFoundError:
+            raise
+        except Exception:
+            raise InstantiateCSVError(path)

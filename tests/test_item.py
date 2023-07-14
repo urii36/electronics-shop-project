@@ -93,3 +93,14 @@ def test_item_string_to_number():
     assert Item.string_to_number('10.5') == 10
 
 
+def test_instantiate_from_csv_file_not_found():
+    with pytest.raises(FileNotFoundError):
+        Item.instantiate_from_csv("src/items.csv")
+
+
+def test_instantiate_from_csv_file_corrupted():
+    with pytest.raises(InstantiateCSVError):
+        Item.instantiate_from_csv("../src/items_failed.csv")
+
+
+
